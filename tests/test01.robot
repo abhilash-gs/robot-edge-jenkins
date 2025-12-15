@@ -1,6 +1,7 @@
 *** Settings ***
 Library    OperatingSystem
 Library    String
+Library    Collections
 
 *** Variables ***
 ${CSV_FILE_PATH}    ${EMPTY}
@@ -70,7 +71,7 @@ Parse CSV File
         Append To List    ${data_rows}    ${row_data}
     END
     
-    [Return]    ${headers}    ${data_rows}
+    RETURN    ${headers}    ${data_rows}
 
 Strip Whitespace From List
     [Arguments]    ${list}
@@ -81,7 +82,7 @@ Strip Whitespace From List
         ${clean_item}=    Strip String    ${item}
         Append To List    ${cleaned}    ${clean_item}
     END
-    [Return]    ${cleaned}
+    RETURN    ${cleaned}
 
 Get Value By Header
     [Arguments]    ${headers}    ${row_data}    ${header_name}
@@ -89,4 +90,4 @@ Get Value By Header
     
     ${index}=    Get Index From List    ${headers}    ${header_name}
     ${value}=    Get From List    ${row_data}    ${index}
-    [Return]    ${value}
+    RETURN    ${value}
