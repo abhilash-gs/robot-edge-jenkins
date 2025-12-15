@@ -10,7 +10,7 @@ Read CSV And Access Data By Index
     [Documentation]    Read CSV file and access data using array indices
     
     # Get CSV file path from Jenkins
-    ${csv_path}=    Get Environment Variable    CSV_FILE_PATH    default=${CURDIR}/tests/test_data.csv
+    ${csv_path}=    Get Environment Variable    CSV_FILE_PATH    default=${CURDIR}/test_data.csv
     Log To Console    \nReading CSV from: ${csv_path}
     
     # Read and parse CSV
