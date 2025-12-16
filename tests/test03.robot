@@ -13,7 +13,7 @@ Read And Store CSV Values
     [Documentation]    Reads CSV from current directory, stores values in variables.
 
     # Use provided path or default to current directory
-    ${csv_path}=    Run Keyword If    '${CSV_FILE}' != 'input.csv'
+    ${csv_path}=    Run Keyword If    '${CSV_FILE}' != 'data.csv'
     ...    Normalize Path    ${CSV_FILE}
     ...    ELSE    Normalize Path    ${CURDIR}${/}input.csv
     Set Global Variable    ${CSV_FILE}    ${csv_path}
