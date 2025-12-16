@@ -6,7 +6,7 @@ Library          OperatingSystem
 Library          CSVLibrary
 
 *** Variables ***
-${CSV_FILE}      ${ENV:WORKSPACE}${/}input.csv
+${CSV_FILE}      ${ENV:WORKSPACE}${/}data.csv
 
 *** Test Cases ***
 Read And Store CSV Values
