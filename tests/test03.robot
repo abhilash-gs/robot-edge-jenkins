@@ -15,7 +15,7 @@ Read And Store CSV Values
     # Use provided path or default to current directory
     ${csv_path}=    Run Keyword If    '${CSV_FILE}' != 'data.csv'
     ...    Normalize Path    ${CSV_FILE}
-    ...    ELSE    Normalize Path    ${CURDIR}${/}input.csv
+    ...    ELSE    Normalize Path    ${CURDIR}${/}data.csv
     Set Global Variable    ${CSV_FILE}    ${csv_path}
 
     File Should Exist    ${CSV_FILE}
