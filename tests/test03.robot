@@ -6,7 +6,7 @@ Library    OperatingSystem
 Library    CSVLibrary
 
 *** Variables ***
-${CSV_FILE}    input.csv
+${CSV_FILE}    data.csv
 
 *** Test Cases ***
 Read And Store CSV Values
