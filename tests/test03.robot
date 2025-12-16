@@ -1,52 +1,37 @@
 *** Settings ***
-Documentation    Simplified CSV reader for Jenkins CI. Reads input.csv and stores values in variables.
+Documentation    Simplified CSV reader. Works in Jenkins AND local CLI.
 
-Library          Collections
-Library          OperatingSystem
-Library          CSVLibrary
+Library    Collections
+Library    OperatingSystem
+Library    CSVLibrary
 
 *** Variables ***
-# Default paths - will be overridden in test case
 ${CSV_FILE}    input.csv
 
 *** Test Cases ***
 Read And Store CSV Values
-    [Documentation]    Reads CSV, stores header and data values in variables, logs key values only.
+    [Documentation]    Reads CSV from current directory, stores values in variables.
 
-    # Set CSV file path (Jenkins or local)
-    Run Keyword If    '${WORKSPACE}' != '${EMPTY}'    Set CSV Path For Jenkins
-    ...    ELSE    Set CSV Path For Local
+    # Use provided path or default to current directory
+    ${csv_path}=    Run Keyword If    '${CSV_FILE}' != 'input.csv'
+    ...    Normalize Path    ${CSV_FILE}
+    ...    ELSE    Normalize Path    ${CURDIR}${/}input.csv
+    Set Global Variable    ${CSV_FILE}    ${csv_path}
 
-    # Verify file exists
     File Should Exist    ${CSV_FILE}
 
-    # Read entire CSV into rows
+    # Read CSV and store values
     ${rows}=    Read CSV File To List    ${CSV_FILE}
-
-    # Store first row (headers) in variable
     ${headers}=    Get From List    ${rows}    0
-    ${header_count}=    Get Length    ${headers}
+    ${data_row}=   Get From List    ${rows}    1
 
-    # Store second row (first data row) in variable
-    ${data_row}=    Get From List    ${rows}    1
-    ${row_count}=    Get Length    ${data_row}
+    # Store specific values
+    ${email}=      Get From List    ${data_row}    0
+    ${name}=       Get From List    ${data_row}    1
 
-    # Store specific cell values in variables
-    ${email_value}=    Get From List    ${data_row}    0
-    ${name_value}=    Get From List    ${data_row}    1
-
-    # Log stored variables to console
-    Log To Console    === CSV VALUES STORED ===
+    # Log results
+    Log To Console    === CSV VALUES ===
     Log To Console    File: ${CSV_FILE}
+    Log To Console    Email: ${email}
+    Log To Console    Name: ${name}
     Log To Console    Headers: ${headers}
-    Log To Console    Email: ${email_value}
-    Log To Console    Name: ${name_value}
-    Log To Console    Row Length: ${row_count}
-
-*** Keywords ***
-Set CSV Path For Jenkins
-    Set Global Variable    ${CSV_FILE}    ${WORKSPACE}${/}input.csv
-
-Set CSV Path For Local
-    ${cur_dir}=    Normalize Path    ${CURDIR}${/}input.csv
-    Set Global Variable    ${CSV_FILE}    ${cur_dir}
