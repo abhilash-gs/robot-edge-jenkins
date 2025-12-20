@@ -1,51 +1,35 @@
 *** Settings ***
-Documentation    Append a new row to existing CSV. Works in Jenkins AND local CLI.
+Documentation    Append a new row to existing CSV on a new line. Works in Jenkins AND local CLI.
 
-Library     Collections
-Library     OperatingSystem
-Library     CSVLibrary
-Library     String
+Library    Collections
+Library    OperatingSystem
+Library    CSVLibrary
 
 *** Variables ***
-${CSV_FILE}     tests/data.csv
-${NEW_NAME}     Abhi
+${CSV_FILE}      tests/data.csv
+${NEW_NAME}      Abhi
 ${NEW_EMAIL}     abhi@test.com
-${NEW_ROLE}     TechDev
-
+${NEW_ROLE}      TechDev
 
 *** Test Cases ***
 Append New Row To CSV
-    [Documentation]    Appends a new row to the CSV file with provided values.
-    # Use provided path or default to current directory (same style as test03.robot)[2]
+    [Documentation]    Appends a new row (email, name, role) on a new line to the CSV file.
+
+    # Use provided path or default to current directory (same style as test03.robot)
     ${csv_path}=    Run Keyword If    '${CSV_FILE}' != 'data.csv'
-...    Normalize Path    ${CSV_FILE}
-...    ELSE    Normalize Path    ${CURDIR}${/}data.csv
+    ...    Normalize Path    ${CSV_FILE}
+    ...    ELSE    Normalize Path    ${CURDIR}${/}data.csv
     Set Global Variable    ${CSV_FILE}    ${csv_path}
 
     File Should Exist    ${CSV_FILE}
 
- # Ensure file ends with newline so next CSV row starts on a new line
-    ${content}=    Get File    ${CSV_FILE}
-    ${length}=     Get Length    ${content}
-    Run Keyword If    ${length} > 0
-    ...    Ensure Trailing Newline   ${content}    ${CSV_FILE}
+    # Build CSV line: column 0=email, 1=name, 2=role
+    ${line}=    Catenate    SEPARATOR=,    ${NEW_EMAIL}    ${NEW_NAME}    ${NEW_ROLE}
 
-    # Build new row as list: column 0=email, 1=name, 2=role[web:2][web:3]
-    ${new_row}=    Create List    ${NEW_EMAIL}    ${NEW_NAME}    ${NEW_ROLE}
-    ${data}=       Create List    ${new_row}
+    # Always append with a leading newline so it becomes a new row
+    Append To File    ${CSV_FILE}    \n${line}
 
-# Append the new row to CSV (CSVLibrary keyword: Append To Csv File)[4]
-    Append To Csv File    ${CSV_FILE}    ${data}
-
-# Log result
-    Log To Console    === APPENDED NEW CSV ROW ===
-    Log To Console    File: ${CSV_FILE}
-    Log To Console    Email: ${NEW_EMAIL}, Name: ${NEW_NAME}, Role: ${NEW_ROLE}
-
-
-*** Keywords ***
-Ensure Trailing Newline
-    [Arguments]    ${content}    ${path}
-    ${last_char}=    Get Substring    ${content}    -1
-    Run Keyword If    '${last_char}' != '\n'
-    ...    Append To File    ${path}    \n
+    # (Optional) Read back to verify structure still OK
+    ${rows}=    Read CSV File To List    ${CSV_FILE}
+    Log To Console    === CSV AFTER APPEND ===
+    Log To Console    ${rows}
