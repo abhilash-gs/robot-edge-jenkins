@@ -16,6 +16,7 @@ ${BROWSER}           chrome
 Capture Screenshot With Caption
     [Arguments]    ${filename}    ${caption}
     Capture Page Screenshot    ${filename}
+    Run Keyword And Ignore Error    Move File    ${filename}    ${SCREENSHOT_DIR}${/}${filename}
     ${path}=    Set Variable    ${SCREENSHOT_DIR}${/}${filename}
     Log To Console    ✓ Captured: ${caption} -> ${path}
     RETURN    ${path}    ${caption}
