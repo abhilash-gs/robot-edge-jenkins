@@ -4,6 +4,7 @@ Documentation    Append a new row to existing CSV. Works in Jenkins AND local CL
 Library     Collections
 Library     OperatingSystem
 Library     CSVLibrary
+Library     String
 
 *** Variables ***
 ${CSV_FILE}     tests/data.csv
@@ -26,8 +27,8 @@ Append New Row To CSV
  # Ensure file ends with newline so next CSV row starts on a new line
     ${content}=    Get File    ${CSV_FILE}
     ${length}=     Get Length    ${content}
-    Run Keyword If    ${length} > 0 and not '${content[-1]}' == '\n'
-    ...    Append To File    ${CSV_FILE}    \n
+    Run Keyword If    ${length} > 0
+    ...    Ensure Trailing Newline   ${content}    ${CSV_FILE}
 
     # Build new row as list: column 0=email, 1=name, 2=role[web:2][web:3]
     ${new_row}=    Create List    ${NEW_EMAIL}    ${NEW_NAME}    ${NEW_ROLE}
@@ -40,3 +41,11 @@ Append New Row To CSV
     Log To Console    === APPENDED NEW CSV ROW ===
     Log To Console    File: ${CSV_FILE}
     Log To Console    Email: ${NEW_EMAIL}, Name: ${NEW_NAME}, Role: ${NEW_ROLE}
+
+
+*** Keywords ***
+Ensure Trailing Newline
+    [Arguments]    ${content}    ${path}
+    ${last_char}=    Get Substring    ${content}    -1
+    Run Keyword If    '${last_char}' != '\n'
+    ...    Append To File    ${path}    \n
