@@ -24,7 +24,7 @@ Append New Row To CSV
     File Should Exist    ${CSV_FILE}
 
     # Build CSV line: column 0=name, 1=email, 2=role
-    ${line}=    Catenate    SEPARATOR=,    ${NEW_NAME}    ${NEW_EMAIL}    ${NEW_ROLE}
+    ${line}=    Catenate    SEPARATOR=,    "${NEW_NAME}"    "${NEW_EMAIL}"    "${NEW_ROLE}"
 
     # Always append with a leading newline so it becomes a new row
     Append To File    ${CSV_FILE}    \n${line}
