@@ -3,28 +3,33 @@ from docx.shared import Inches
 import os
 
 class DocxLibrary:
-    """Dynamic DOCX library for Robot Framework - Unlimited screenshots."""
+    """Dynamic DOCX library - FIXED for Robot Framework lists."""
     
     def create_screenshots_document(self, output_path, *args):
-        """
-        Dynamic screenshots: output_path, img1, caption1, img2, caption2, ...
-        Supports @{list} from Robot Framework perfectly.
-        """
-        print(f"DEBUG: Received {len(args)} arguments ({len(args)//2} screenshots)")
+        """Handles Robot Framework @{list} unpacking correctly."""
+        print(f"DEBUG: Received {len(args)} raw arguments")
         
-        # Validate even number of arguments (image + caption pairs)
+        # FLATTEN Robot Framework nested lists
+        flattened_args = []
+        for arg in args:
+            if isinstance(arg, list):
+                flattened_args.extend(arg)  # Flatten nested lists
+            else:
+                flattened_args.append(arg)
+        
+        args = tuple(flattened_args)
+        print(f"DEBUG: Flattened to {len(args)} arguments ({len(args)//2} screenshots)")
+        
         if len(args) % 2 != 0:
-            raise AssertionError(f"Expected even number of args (image+caption pairs). Got {len(args)}")
+            raise AssertionError(f"Expected even number of args. Got {len(args)}")
         
-        # Create directory if needed
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
         
         doc = Document()
         doc.add_heading('Screenshots Report', 0)
         doc.add_paragraph(f'Generated: {os.path.basename(output_path)}')
-        doc.add_paragraph('')  # Spacing
+        doc.add_paragraph('')
         
-        # Process all screenshot pairs
         for i in range(0, len(args), 2):
             img_path = args[i]
             caption = args[i + 1]
@@ -34,12 +39,10 @@ class DocxLibrary:
             if not os.path.exists(img_path):
                 raise AssertionError(f"❌ Image missing: {img_path}")
             
-            # Add heading and image
             doc.add_heading(caption, level=1)
             doc.add_picture(img_path, width=Inches(6.5))
-            doc.add_paragraph('')  # Spacing between screenshots
+            doc.add_paragraph('')
         
-        # Save document
         doc.save(output_path)
         print(f"✅ SUCCESS: DOCX saved to {output_path}")
         return output_path
