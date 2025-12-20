@@ -2,7 +2,6 @@
 Library    SeleniumLibrary
 Library    OperatingSystem
 Library    Collections
-Library    DateTime
 Library    DocxLibrary.py
 
 Suite Setup    Create Directory    ${SCREENSHOT_DIR}
@@ -35,21 +34,20 @@ Capture Multiple Dynamic Screenshots
     Log To Console    Directory: ${SCREENSHOT_DIR}
     Log To Console    ======================================\n
     
-    # Get current timestamp in yyyymmdd_HHmm format
-    ${timestamp}=    Get Current Date    result_format=%Y%m%d_%H%M
-    Log To Console    📅 Timestamp: ${timestamp}
+    # No longer needed since we use full paths
+    # Set Screenshot Directory    ${SCREENSHOT_DIR}
     
     Open Browser    https://www.google.com    ${BROWSER}
-    ${google_path}    ${google_caption}=    Capture Screenshot With Caption    GoogleHome_${timestamp}.png    Google Home Page
+    ${google_path}    ${google_caption}=    Capture Screenshot With Caption    Screenshot001.png    Google Home Page \n Saving Screenshot
     
     Go To    https://chatgpt.com
-    ${chatgpt_path}    ${chatgpt_caption}=    Capture Screenshot With Caption    ChatGPT_${timestamp}.png    ChatGPT Login Page
+    ${chatgpt_path}    ${chatgpt_caption}=    Capture Screenshot With Caption    Screenshot002.png    ChatGPT Login Page
     
     Go To    https://github.com
-    ${github_path}    ${github_caption}=    Capture Screenshot With Caption    GitHub_${timestamp}.png    GitHub Dashboard
+    ${github_path}    ${github_caption}=    Capture Screenshot With Caption    Screenshot003.png    GitHub Dashboard
     
     Go To    https://stackoverflow.com
-    ${stackoverflow_path}    ${stackoverflow_caption}=    Capture Screenshot With Caption    StackOverflow_${timestamp}.png    StackOverflow Home
+    ${stackoverflow_path}    ${stackoverflow_caption}=    Capture Screenshot With Caption    Screenshot004.png    StackOverflow Home
     
     # Create list with proper path-caption pairs
     @{all_screenshots}=    Create List    
