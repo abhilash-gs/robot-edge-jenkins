@@ -8,22 +8,24 @@ Suite Setup    Create Directory    ${SCREENSHOT_DIR}
 Suite Teardown    Close All Browsers
 
 *** Variables ***
-${SCREENSHOT_DIR}    ${CURDIR}/tests/screenshots
-${DOCX_FILE}         ${CURDIR}/ScreenshotsDoc.docx
+${SCREENSHOT_DIR}    ${CURDIR}${/}screenshots    # FIXED: No double tests/
+${DOCX_FILE}         ${CURDIR}${/}ScreenshotsDoc.docx
 ${BROWSER}           chrome
 
 *** Keywords ***
 Capture Screenshot With Caption
     [Arguments]    ${filename}    ${caption}
     Capture Page Screenshot    ${filename}
-    ${path}=    Set Variable    ${SCREENSHOT_DIR}/${filename}
+    ${path}=    Set Variable    ${SCREENSHOT_DIR}${/}${filename}
     Log To Console    ✓ Captured: ${caption} -> ${path}
-    RETURN    ${path}    ${caption}
+    RETURN   ${path}    ${caption}
 
 Generate Dynamic DOCX Report
     [Arguments]    @{screenshot_list}
     Log To Console    📄 Creating DOCX with ${screenshot_list.__len__()//2} screenshots...
-    Create Screenshots Document    ${DOCX_FILE}    @{screenshot_list}
+    # FIXED: Flatten list properly for Python *args
+    @{flattened}=    Create List    @{screenshot_list}
+    Create Screenshots Document    ${DOCX_FILE}    @{flattened}
     Log To Console    ✅ DOCX created: ${DOCX_FILE}
 
 *** Test Cases ***
@@ -35,7 +37,6 @@ Capture Multiple Dynamic Screenshots
     
     Set Screenshot Directory    ${SCREENSHOT_DIR}
     
-    # Dynamic screenshot capture - add as many as needed
     Open Browser    https://www.google.com    ${BROWSER}
     ${google}=    Capture Screenshot With Caption    Screenshot001.png    Google Home Page
     
@@ -48,16 +49,11 @@ Capture Multiple Dynamic Screenshots
     Go To    https://stackoverflow.com
     ${stackoverflow}=    Capture Screenshot With Caption    Screenshot004.png    StackOverflow Home
     
-    # DYNAMIC: Create list of ALL screenshots (add/remove easily)
-    @{all_screenshots}=    Create List    
-    ...    ${google}    Google Home Page
-    ...    ${chatgpt}    ChatGPT Login Page
-    ...    ${github}    GitHub Dashboard
-    ...    ${stackoverflow}    StackOverflow Home
+    # DYNAMIC: Create flattened list
+    @{all_screenshots}=    Create List    ${google}    Google Home Page    ${chatgpt}    ChatGPT Login Page    ${github}    GitHub Dashboard    ${stackoverflow}    StackOverflow Home
     
     Generate Dynamic DOCX Report    @{all_screenshots}
     
     Log To Console    🎉 ======================================
     Log To Console    Process completed successfully!
-    Log To Console    Total screenshots: ${all_screenshots.__len__()//2}
     Log To Console    ======================================\n
