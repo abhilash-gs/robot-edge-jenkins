@@ -5,7 +5,7 @@ import os
 class DocxLibrary:
     """Dynamic DOCX library - FIXED for Robot Framework lists."""
     
-    def create_screenshots_document(self, output_path, *args):
+    def create_screenshots_document(self, output_path, *args, HeaderReport):
         """Handles Robot Framework @{list} unpacking correctly."""
         print(f"DEBUG: Received {len(args)} raw arguments")
         
@@ -26,8 +26,8 @@ class DocxLibrary:
         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
         
         doc = Document()
-        doc.add_heading('Screenshots Report', 0)
-        doc.add_paragraph(f'Generated: {os.path.basename(output_path)}')
+        doc.add_heading(HeaderReport, 0)
+        # doc.add_paragraph(f'Generated: {os.path.basename(output_path)}')
         doc.add_paragraph('')
         
         for i in range(0, len(args), 2):
