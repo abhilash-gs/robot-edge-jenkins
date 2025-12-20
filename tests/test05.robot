@@ -13,7 +13,7 @@ ${BROWSER}           chrome
 
 *** Test Cases ***
 Capture Google and ChatGPT Screenshots
-    Log To Console   \\nThe current directory Loggin is ${CURDIR}
+    Log To Console   \n The current directory Loggin is ${CURDIR}
     Set Screenshot Directory    ${SCREENSHOT_DIR}
     Open Browser    https://www.google.com    ${BROWSER}
     Capture Page Screenshot    Screenshot001.png
