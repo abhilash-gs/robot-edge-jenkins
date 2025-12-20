@@ -23,9 +23,15 @@ Append New Row To CSV
 
     File Should Exist    ${CSV_FILE}
 
-# Build new row as list: column 0=email, 1=name, 2=role[3][4]
+ # Ensure file ends with newline so next CSV row starts on a new line
+    ${content}=    Get File    ${CSV_FILE}
+    ${length}=     Get Length    ${content}
+    Run Keyword If    ${length} > 0 and not '${content[-1]}' == '\n'
+    ...    Append To File    ${CSV_FILE}    \n
+
+    # Build new row as list: column 0=email, 1=name, 2=role[web:2][web:3]
     ${new_row}=    Create List    ${NEW_EMAIL}    ${NEW_NAME}    ${NEW_ROLE}
-    ${data}=       Create List     ${new_row}
+    ${data}=       Create List    ${new_row}
 
 # Append the new row to CSV (CSVLibrary keyword: Append To Csv File)[4]
     Append To Csv File    ${CSV_FILE}    ${data}
