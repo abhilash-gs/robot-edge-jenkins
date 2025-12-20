@@ -8,25 +8,23 @@ Suite Setup    Create Directory    ${SCREENSHOT_DIR}
 Suite Teardown    Close All Browsers
 
 *** Variables ***
-${SCREENSHOT_DIR}    ${CURDIR}${/}screenshots    # FIXED: No double tests/
+${SCREENSHOT_DIR}    ${CURDIR}${/}screenshots
 ${DOCX_FILE}         ${CURDIR}${/}ScreenshotsDoc.docx
 ${BROWSER}           chrome
 
 *** Keywords ***
 Capture Screenshot With Caption
     [Arguments]    ${filename}    ${caption}
-    Capture Page Screenshot    ${filename}
-    Run Keyword And Ignore Error    Move File    ${filename}    ${SCREENSHOT_DIR}${/}${filename}
-    ${path}=    Set Variable    ${SCREENSHOT_DIR}${/}${filename}
-    Log To Console    ✓ Captured: ${caption} -> ${path}
-    RETURN    ${path}    ${caption}
+    # Use full path for screenshot
+    ${full_path}=    Set Variable    ${SCREENSHOT_DIR}${/}${filename}
+    Capture Page Screenshot    ${full_path}
+    Log To Console    ✓ Captured: ${caption} -> ${full_path}
+    RETURN    ${full_path}    ${caption}
 
 Generate Dynamic DOCX Report
     [Arguments]    @{screenshot_list}
     Log To Console    📄 Creating DOCX with ${screenshot_list.__len__()//2} screenshots...
-    # FIXED: Flatten list properly for Python *args
-    @{flattened}=    Create List    @{screenshot_list}
-    Create Screenshots Document    ${DOCX_FILE}    @{flattened}
+    Create Screenshots Document    ${DOCX_FILE}    @{screenshot_list}
     Log To Console    ✅ DOCX created: ${DOCX_FILE}
 
 *** Test Cases ***
@@ -36,22 +34,27 @@ Capture Multiple Dynamic Screenshots
     Log To Console    Directory: ${SCREENSHOT_DIR}
     Log To Console    ======================================\n
     
-    Set Screenshot Directory    ${SCREENSHOT_DIR}
+    # No longer needed since we use full paths
+    # Set Screenshot Directory    ${SCREENSHOT_DIR}
     
     Open Browser    https://www.google.com    ${BROWSER}
-    ${google}=    Capture Screenshot With Caption    Screenshot001.png    Google Home Page
+    ${google_path}    ${google_caption}=    Capture Screenshot With Caption    Screenshot001.png    Google Home Page
     
     Go To    https://chatgpt.com
-    ${chatgpt}=    Capture Screenshot With Caption    Screenshot002.png    ChatGPT Login Page
+    ${chatgpt_path}    ${chatgpt_caption}=    Capture Screenshot With Caption    Screenshot002.png    ChatGPT Login Page
     
     Go To    https://github.com
-    ${github}=    Capture Screenshot With Caption    Screenshot003.png    GitHub Dashboard
+    ${github_path}    ${github_caption}=    Capture Screenshot With Caption    Screenshot003.png    GitHub Dashboard
     
     Go To    https://stackoverflow.com
-    ${stackoverflow}=    Capture Screenshot With Caption    Screenshot004.png    StackOverflow Home
+    ${stackoverflow_path}    ${stackoverflow_caption}=    Capture Screenshot With Caption    Screenshot004.png    StackOverflow Home
     
-    # DYNAMIC: Create flattened list
-    @{all_screenshots}=    Create List    ${google}    Google Home Page    ${chatgpt}    ChatGPT Login Page    ${github}    GitHub Dashboard    ${stackoverflow}    StackOverflow Home
+    # Create list with proper path-caption pairs
+    @{all_screenshots}=    Create List    
+    ...    ${google_path}    ${google_caption}
+    ...    ${chatgpt_path}    ${chatgpt_caption}
+    ...    ${github_path}    ${github_caption}
+    ...    ${stackoverflow_path}    ${stackoverflow_caption}
     
     Log To Console    Current Directory is - ${CURDIR}
 
