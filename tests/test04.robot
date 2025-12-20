@@ -7,7 +7,7 @@ Library    CSVLibrary
 
 *** Variables ***
 ${CSV_FILE}      tests/data.csv
-${NEW_NAME}      Abhi
+${NEW_NAME}      Abhi,GS
 ${NEW_EMAIL}     
 ${NEW_ROLE}      TechDev
 
