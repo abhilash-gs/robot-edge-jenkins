@@ -52,6 +52,8 @@ Capture Multiple Dynamic Screenshots
     # DYNAMIC: Create flattened list
     @{all_screenshots}=    Create List    ${google}    Google Home Page    ${chatgpt}    ChatGPT Login Page    ${github}    GitHub Dashboard    ${stackoverflow}    StackOverflow Home
     
+    Log To Console    Current Directory is - ${CURDIR}
+
     Generate Dynamic DOCX Report    @{all_screenshots}
     
     Log To Console    🎉 ======================================
