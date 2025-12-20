@@ -16,7 +16,7 @@ Capture Google and ChatGPT Screenshots
     Log To Console   \\nThe current directory Loggin is ${CURDIR}
     Set Screenshot Directory    ${SCREENSHOT_DIR}
     Open Browser    https://www.google.com    ${BROWSER}
-    Capture Page Screenshot    Screenshot001.jpg
+    Capture Page Screenshot    Screenshot001.png
     Go To    https://chatgpt.com
-    Capture Page Screenshot    Screenshot002.jpg
+    Capture Page Screenshot    Screenshot002.png
     Create Screenshots Document    ${SCREENSHOT_DIR}/Screenshot001.jpg    Screenshot 1 - Google    ${SCREENSHOT_DIR}/Screenshot002.jpg    Screenshot 2 - ChatGPT    ${DOCX_FILE}
