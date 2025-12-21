@@ -9,8 +9,9 @@ Suite Setup    Create Directory    ${SCREENSHOT_DIR}
 Suite Teardown    Close All Browsers
 
 *** Variables ***
+${timestamp}=        Get Current Date    result_format=%Y%m%d_%H%M
 ${SCREENSHOT_DIR}    ${CURDIR}${/}screenshots
-${DOCX_FILE}         ${CURDIR}${/}ScreenshotsDoc.docx
+${DOCX_FILE}         ${CURDIR}${/}ScreenshotsDoc_${timestamp}.docx
 ${BROWSER}           chrome
 
 *** Keywords ***
@@ -36,7 +37,7 @@ Capture Multiple Dynamic Screenshots
     Log To Console    ======================================\n
     
     # Get current timestamp in yyyymmdd_HHmm format
-    ${timestamp}=    Get Current Date    result_format=%Y%m%d_%H%M
+    
     Log To Console    📅 Timestamp: ${timestamp}
     
     Open Browser    https://www.google.com    ${BROWSER}
