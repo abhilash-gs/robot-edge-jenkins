@@ -24,7 +24,7 @@ Capture Screenshot With Caption
 Generate Dynamic DOCX Report
     [Arguments]    ${docx_file}    @{screenshot_list}
     Log To Console    📄 Creating DOCX with ${screenshot_list.__len__()//2} screenshots...
-    Create Screenshots Document    ${docx_file}    @{screenshot_list}
+    Create Screenshots Document    ${docx_file}    @{screenshot_list}    HeaderReport=Dynamic Screenshots Report
     Log To Console    ✅ DOCX created: ${docx_file}
 
 *** Test Cases ***
@@ -68,4 +68,3 @@ Capture Multiple Dynamic Screenshots
     Log To Console    🎉 ======================================
     Log To Console    Process completed successfully!
     Log To Console    ======================================\n
-    [Teardown]    Close All Browsers
