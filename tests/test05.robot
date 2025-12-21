@@ -9,9 +9,7 @@ Suite Setup    Create Directory    ${SCREENSHOT_DIR}
 Suite Teardown    Close All Browsers
 
 *** Variables ***
-${timestamp}=        Get Current Date    result_format=%Y%m%d_%H%M
 ${SCREENSHOT_DIR}    ${CURDIR}${/}screenshots
-${DOCX_FILE}         ${CURDIR}${/}ScreenshotsDoc_${timestamp}.docx
 ${BROWSER}           chrome
 
 *** Keywords ***
@@ -24,10 +22,10 @@ Capture Screenshot With Caption
     RETURN    ${full_path}    ${caption}
 
 Generate Dynamic DOCX Report
-    [Arguments]    @{screenshot_list}
+    [Arguments]    ${docx_file}    @{screenshot_list}
     Log To Console    📄 Creating DOCX with ${screenshot_list.__len__()//2} screenshots...
-    Create Screenshots Document    ${DOCX_FILE}    @{screenshot_list}
-    Log To Console    ✅ DOCX created: ${DOCX_FILE}
+    Create Screenshots Document    ${docx_file}    @{screenshot_list}
+    Log To Console    ✅ DOCX created: ${docx_file}
 
 *** Test Cases ***
 Capture Multiple Dynamic Screenshots
@@ -37,8 +35,12 @@ Capture Multiple Dynamic Screenshots
     Log To Console    ======================================\n
     
     # Get current timestamp in yyyymmdd_HHmm format
-    
+    ${timestamp}=        Get Current Date    result_format=%Y%m%d_%H%M
     Log To Console    📅 Timestamp: ${timestamp}
+    
+    # Create dynamic DOCX filename
+    ${docx_file}=    Set Variable    ${CURDIR}${/}ScreenshotsDoc_${timestamp}.docx
+    Log To Console    📄 DOCX filename: ${docx_file}
     
     Open Browser    https://www.google.com    ${BROWSER}
     ${google_path}    ${google_caption}=    Capture Screenshot With Caption    GoogleHome_${timestamp}.png    Google Home Page
@@ -53,7 +55,7 @@ Capture Multiple Dynamic Screenshots
     ${stackoverflow_path}    ${stackoverflow_caption}=    Capture Screenshot With Caption    StackOverflow_${timestamp}.png    StackOverflow Home
     
     # Create list with proper path-caption pairs
-    @{all_screenshots}=    Create List    
+    @{all_screenshots}=    Create List
     ...    ${google_path}    ${google_caption}
     ...    ${chatgpt_path}    ${chatgpt_caption}
     ...    ${github_path}    ${github_caption}
@@ -61,8 +63,9 @@ Capture Multiple Dynamic Screenshots
     
     Log To Console    Current Directory is - ${CURDIR}
 
-    Generate Dynamic DOCX Report    @{all_screenshots}
+    Generate Dynamic DOCX Report    ${docx_file}    @{all_screenshots}
     
     Log To Console    🎉 ======================================
     Log To Console    Process completed successfully!
     Log To Console    ======================================\n
+    [Teardown]    Close All Browsers
